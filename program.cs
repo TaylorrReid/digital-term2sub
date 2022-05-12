@@ -45,18 +45,42 @@ namespace name
 		nextGeneration(grid, M, N);
 	}
 
-class TextWriter
+public static class Logger
 {
-    static void Secondary(string[] args)
+    public static StringBuilder LogString = new StringBuilder();
+    public static void WriteLine(string str)
     {
+        Console.WriteLine(str);
+        LogString.Append(str).Append(Environment.NewLine);
+    }
+    public static void Write(string str)
+    {
+        Console.Write(str);
+        LogString.Append(str);
 
-        // Set a variable to the Documents path.
-        string GenWriter = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-        // Append text to an existing file named "WriteLines.txt".
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine(GenWriter, "WriteLines.txt"), true))
+    }
+    public static void SaveLog(bool Append = false, string Path = "./Log.txt")
+    {
+        if (LogString != null && LogString.Length > 0)
         {
-            outputFile.WriteLine("Fourth Line");
+            if (Append)
+            {
+                using (StreamWriter file = System.IO.File.AppendText(Path))
+                {
+                    file.Write(LogString.ToString());
+                    file.Close();
+                    file.Dispose();
+                }
+            }
+            else
+            {
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(Path))
+                {
+                    file.Write(LogString.ToString());
+                    file.Close();
+                    file.Dispose();
+                }
+            }               
         }
     }
 }
@@ -75,17 +99,14 @@ class TextWriter
 			for (int m = 1; m < N - 1; m++)
 			{
 				
-				// finding no Of Neighbours
-				// that are alive
+				// finding number Of Neighbours that are alive
 				int aliveNeighbours = 0;
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++)
 						aliveNeighbours +=
 								grid[l + i,m + j];
 
-				// The cell needs to be subtracted
-				// from its neighbours as it was
-				// counted before
+				// The cell needs to be subtracted from its neighbours as it was counted before
 				aliveNeighbours -= grid[l,m];
 
 				// Implementing the Rules of Life
